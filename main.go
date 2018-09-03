@@ -72,9 +72,6 @@ func main()  {
 	localhost := getLocalhost(hostConfig)
 	muxHost(r, localhost)
 
-
-	//s := http.FileServer(http.Dir("/"))
-	//r.PathPrefix("/").Handler(s)
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(hostConfig.Port), r))
 }
