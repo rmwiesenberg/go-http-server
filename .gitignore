@@ -10,3 +10,9 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# get outta here intelij
+.idea/
+
+# actual config fine should be committed. Look to the example for... well an example
+.host-config.json

@@ -1,0 +1,14 @@
+{
+  "hosts": [
+    {
+      "hostname": "shotsfired.xyz",
+      "basedir": "/Users/Ryan/personal/shotsfired"
+    },
+    {
+      "hostname": "rmwiesenberg.com",
+      "basedir": "/Users/Ryan/personal/website/"
+    }
+  ],
+  "localhost": "rmwiesenberg.com",
+  "port": 8080
+}
