@@ -1,29 +1,29 @@
 package main
 
 import (
-	"net/http"
-	"github.com/gorilla/mux"
 	"encoding/json"
-	"io/ioutil"
 	"errors"
+	"github.com/gorilla/mux"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os/user"
+	"path/filepath"
 	"strconv"
 	"strings"
-	"path/filepath"
-	"os/user"
-	"log"
+	os "os"
 )
 
 type HostConfig struct {
-	Hosts []Host
+	Hosts     []Host
 	Localhost string
-	Port int
+	Port      int
 }
 
 type Host struct {
 	Hostname string
-	Basedir string
+	Basedir  string
 }
-
 
 func check(e error) {
 	if e != nil {
@@ -41,7 +41,7 @@ func muxHost(router *mux.Router, host Host) {
 	handler := http.FileServer(http.Dir(path))
 	if host.Hostname == "/" {
 		router.PathPrefix("/").Handler(handler)
-	}else {
+	} else {
 		router.Host(host.Hostname).PathPrefix("/").Handler(handler)
 		println("Host added: " + host.Hostname + " -> " + path)
 	}
@@ -50,18 +50,23 @@ func muxHost(router *mux.Router, host Host) {
 func getLocalhost(config HostConfig) Host {
 	for _, host := range config.Hosts {
 		if host.Hostname == config.Localhost {
-			println("Default Host Set: "+host.Hostname)
+			println("Default Host Set: " + host.Hostname)
 			return Host{"/", host.Basedir}
 		}
 	}
 	panic(errors.New("localhost specified in config is not in hosts list"))
 }
 
-func main()  {
+func main() {
 	r := mux.NewRouter()
 
 	var hostConfig HostConfig
-	dat, err := ioutil.ReadFile(".host-config.json")
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+	configPath := filepath.Join(dir, ".host-config.json")
+	dat, err := ioutil.ReadFile(configPath)
 	check(err)
 	json.Unmarshal(dat, &hostConfig)
 
@@ -75,5 +80,3 @@ func main()  {
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(hostConfig.Port), r))
 }
-
-
